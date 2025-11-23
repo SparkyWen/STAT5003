@@ -16,91 +16,754 @@
 
 ### 2. Simple linear regression（简单线性回归）
 
-**Model setup（模型设定）**
+![](./linear regression model.png)
 
-- We have a **predictor / regressor (自变量 / 预测变量)** XXX and **response (因变量 / 响应变量)** YYY.
+![](./RSS.png)
 
-- The **simple linear regression model**:
+### 3. Least Squares Equations & Idea of Least Squares（最小二乘思想）
 
-  Y=f(X)+ε=β0+β1X+εY = f(X) + \varepsilon = \beta_0 + \beta_1 X + \varepsilonY=f(X)+ε=β0+β1X+ε
+![](./least squares equations.png)
 
-  where:
+#### 1. Least Squares Equations（最小二乘方程）
 
-  - β0\beta_0β0: **intercept (截距)** – expected value of YYY when X=0X = 0X=0.
-  - β1\beta_1β1: **slope (斜率)** – expected change in YYY for a **one-unit increase** in XXX.Week_02
-  - ε\varepsilonε: **error term (误差项)**, usually assumed ε∼N(0,σ2) \varepsilon \sim N(0, \sigma^2)ε∼N(0,σ2).Week_02
+通过简单线性回归模型，可以推导出斜率和截距的最小二乘估计。
 
-**Idea of least squares（最小二乘思想）**
+##### 1.1 模型设定
 
-- We observe data (xi,yi),i=1,…,n(x_i, y_i), i=1,\dots,n(xi,yi),i=1,…,n.
+我们考虑简单线性回归（simple linear regression）模型：
 
-- We choose estimates b0,b1b_0, b_1b0,b1 to minimise the **residual sum of squares (残差平方和, RSS)**:
+$$
+y_i = \beta_0 + \beta_1 x_i + \varepsilon_i,\quad i = 1,\dots,n
+$$
 
-  \text{RSS}(b_0,b_1) = \sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2 \]:contentReference[oaicite:8]{index=8}  
+其中：
 
-- The solution (you should be able to write these down):
+- $y_i$：第 $i$ 个观测的响应变量（response / dependent variable）
+- $x_i$：第 $i$ 个观测的自变量（predictor / independent variable）
+- $\beta_0, \beta_1$：真实但未知的截距和斜率（parameters）
+- $\varepsilon_i$：误差项（error）
 
-  b1=∑i=1n(xi−xˉ)(yi−yˉ)∑i=1n(xi−xˉ)2=Cov(X,Y)Var(X)b_1 = \frac{\sum_{i=1}^n (x_i - \bar x)(y_i - \bar y)}{\sum_{i=1}^n (x_i - \bar x)^2} = \frac{\text{Cov}(X,Y)}{\text{Var}(X)}b1=∑i=1n(xi−xˉ)2∑i=1n(xi−xˉ)(yi−yˉ)=Var(X)Cov(X,Y)
+用数据估计得到回归线：
 
-  b0=yˉ−b1xˉb_0 = \bar y - b_1 \bar xb0=yˉ−b1xˉ
+$$
+\hat{y}_i = b_0 + b_1 x_i
+$$
 
-  where xˉ,yˉ\bar x, \bar yxˉ,yˉ are sample means.Week_01 (1)
+这里的 $b_0, b_1$ 是最小二乘估计（least squares estimates）。
 
-**Interpretation（系数含义）**
+---
 
-- **Slope b1b_1b1**: estimated **average increase** in YYY when XXX increases by 1 unit (if model is appropriate).
-- **Intercept b0b_0b0**: estimated mean of YYY at X=0X=0X=0 (sometimes not meaningful if X=0X=0X=0 is outside data range).
-- **Residuals (残差)**: ei=yi−y^i=yi−(b0+b1xi)e_i = y_i - \hat y_i = y_i - (b_0 + b_1 x_i)ei=yi−y^i=yi−(b0+b1xi), the part not explained by the line.
+##### 1.2 斜率（slope / regression coefficient）
+
+最小二乘法得到的斜率估计为：
+
+$$
+b_1 =
+\frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}
+     {\sum_{i=1}^n (x_i - \bar{x})^2}
+= \frac{\mathrm{Cov}(x,y)}{\mathrm{Var}(x)}
+$$
+
+其中：
+
+- 样本均值  
+  $$
+  \bar{x} = \frac{1}{n}\sum_{i=1}^n x_i,\qquad
+  \bar{y} = \frac{1}{n}\sum_{i=1}^n y_i
+  $$
+
+- 样本协方差  
+  $$
+  \mathrm{Cov}(x,y) = \frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})
+  $$
+
+- 样本方差  
+  $$
+  \mathrm{Var}(x) = \frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^2
+  $$
+
+直观理解：
+
+> 斜率 $b_1 =$ “$x$ 与 $y$ 一起变化的程度（协方差）”  
+> 除以 “$x$ 自身变化的程度（方差）”。
+
+---
+
+##### 1.3 截距（intercept）
+
+截距估计为：
+
+$$
+b_0 = \bar{y} - b_1 \bar{x}
+$$
+
+因此，最小二乘回归线一定经过样本均值点 $(\bar{x}, \bar{y})$：
+
+$$
+\hat{y}(\bar{x}) = b_0 + b_1 \bar{x} = \bar{y}
+$$
+
+---
+
+##### 1.4 估计回归线（estimated regression line）
+
+代入 $b_0, b_1$，得到估计回归函数：
+
+$$
+\hat{y} = \hat{f}(x) = b_0 + b_1 x
+$$
+
+这条直线就是 **least squares regression line（最小二乘回归线）**。
+
+---
+
+#### 2. Idea of Least Squares（最小二乘思想）
+
+##### 2.1 残差与残差平方和
+
+对给定的一条直线 $\hat{y}_i = b_0 + b_1 x_i$，第 $i$ 个观测的 **残差（residual）** 为：
+
+$$
+e_i = y_i - \hat{y}_i = y_i - (b_0 + b_1 x_i)
+$$
+
+**残差平方和（Residual Sum of Squares, RSS）** 定义为：
+
+$$
+S(b_0, b_1)
+= \sum_{i=1}^n e_i^2
+= \sum_{i=1}^n \big(y_i - (b_0 + b_1 x_i)\big)^2
+$$
+
+---
+
+##### 2.2 最小二乘法的核心思想
+
+最小二乘法（Least Squares）的核心思想是：
+
+> 在所有可能的直线中，选择那一条，使得  
+> **残差平方和 $S(b_0, b_1)$ 尽可能小**。
+
+也就是解下面的优化问题：
+
+$$
+(b_0, b_1)
+= \arg\min_{(b_0, b_1)}
+\sum_{i=1}^n \big(y_i - b_0 - b_1 x_i\big)^2
+$$
+
+为什么要用“平方和”？
+
+1. 把正负误差都变成正数，避免互相抵消；
+2. 平方放大了大误差的影响，更强烈惩罚离群点；
+3. 数学上可以求导，容易得到解析解。
+
+---
+
+##### ==2.3 从“最小化”推导 $b_0$ 和 $b_1$==
+
+把残差平方和视为 $b_0, b_1$ 的函数：
+
+$$
+S(b_0, b_1) = \sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2
+$$
+
+对 $b_0, b_1$ 分别求偏导并令其为 0：
+
+$$
+\frac{\partial S}{\partial b_0} = 0,\qquad
+\frac{\partial S}{\partial b_1} = 0
+$$
+
+解这个 $2\times 2$ 的“normal equations（正规方程）”，就得到：
+
+$$
+b_1 =
+\frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}
+     {\sum_{i=1}^n (x_i - \bar{x})^2},
+\qquad
+b_0 = \bar{y} - b_1 \bar{x}.
+$$
+
+---
+
+##### 2.4 最小二乘带来的重要性质
+
+由上述条件还可以推得一些重要性质：
+
+1. **残差和为 0**
+
+   $$
+   \sum_{i=1}^n e_i = 0
+   $$
+
+2. **残差与自变量线性不相关**
+
+   $$
+   \sum_{i=1}^n x_i e_i = 0
+   $$
+
+   表示：用 OLS 拟合之后，残差中已经不再含有可以由 $x$ 线性解释的系统性信息。
+
+3. **回归线必然经过样本均值点**
+
+   由 $b_0 = \bar{y} - b_1 \bar{x}$ 可知，当 $x = \bar{x}$ 时：
+
+   $$
+   \hat{y} = b_0 + b_1 \bar{x} = \bar{y},
+   $$
+
+   因此回归线必定通过 $(\bar{x}, \bar{y})$。
+
+---
+
+#### 3. 名字与性质：为什么叫 least squares regression line？
+
+- 这条线 **minimises the residual sum of squares**，所以叫  
+  **least squares regression line（最小二乘回归线）**。
+- 在以下经典假设下（线性、无多重共线性、严格外生性、误差独立同分布且方差齐性、误差正态等），
+  最小二乘估计具有 **BLUE（Best Linear Unbiased Estimator）** 性质：
+  - **Linear**：估计量是 $y$ 的线性组合；
+  - **Unbiased**：$E[b_0] = \beta_0,\ E[b_1] = \beta_1$；
+  - **Best**：在所有线性无偏估计量中方差最小。
+
+---
+
+#### 4. 一句考试用总结（背诵版）
+
+![](./RSS_understanding.png)
+
+对简单线性回归模型
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \varepsilon_i,
+$$
+
+最小二乘法通过最小化
+
+$$
+\sum_{i=1}^n (y_i - b_0 - b_1 x_i)^2
+$$
+
+得到参数估计
+
+$$
+b_1 =
+\frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}
+     {\sum_{i=1}^n (x_i - \bar{x})^2}
+= \frac{\mathrm{Cov}(x,y)}{\mathrm{Var}(x)},
+\qquad
+b_0 = \bar{y} - b_1 \bar{x}.
+$$
+
+这条直线经过 $(\bar{x}, \bar{y})$，并在所有直线中使残差平方和最小，因此称为 **least squares regression line（最小二乘回归线）**；在经典假设下，它还是 **BLUE（Best Linear Unbiased Estimator）**。
 
 ------
 
-### 3. Inference for regression（回归中的统计推断）
+### 3. Inference for Regression（回归中的统计推断）
 
-**Standard errors（标准误）**
+本节内容：
+- 标准误（standard errors）
+- 置信区间与显著性检验（confidence intervals & tests）
+- 模型假设 / Gauss–Markov 条件
+- 异方差性（heteroskedasticity）及其后果
 
-- For a **sample mean (样本均值)** μ^=Yˉ\hat\mu = \bar Yμ^=Yˉ,
+---
 
-  \text{Var}(\hat\mu) = \frac{\sigma^2}{n}, \quad \text{SE}(\hat\mu) = \frac{\sigma}{\sqrt{n}}. \]:contentReference[oaicite:10]{index=10}  
+#### 3.1 Standard Errors（标准误）
 
-- Analogously, for regression coefficients we have:
+##### 3.1.1 样本均值的标准误
 
-  \text{SE}(\widehat{\beta_0}) =  \sigma \sqrt{\frac{1}{n} + \frac{\bar x^2}{\sum_{i=1}^n (x_i - \bar x)^2}}, \quad \text{SE}(\widehat{\beta_1}) =  \frac{\sigma}{\sqrt{\sum_{i=1}^n (x_i - \bar x)^2}}. \]:contentReference[oaicite:11]{index=11}   In practice \(\sigma\) is unknown, so we estimate it from residuals.
+对一个总体均值 $\mu$，用样本均值 $\hat{\mu} = \bar{Y}$ 作为估计量时：
 
-**Confidence intervals & tests（置信区间与检验）**
+$$
+\hat{\mu} = \bar{Y}
+$$
 
-- Typical **null hypothesis (原假设)**: H0:β1=0H_0: \beta_1 = 0H0:β1=0 (no linear relationship).
+在经典 i.i.d. 假设下：
 
-- Test statistic: t=β1^SE(β1^)t = \frac{\widehat{\beta_1}}{\text{SE}(\widehat{\beta_1})}t=SE(β1)β1, compare with t-distribution.
+$$
+\mathrm{Var}(\hat{\mu}) = \frac{\sigma^2}{n}, 
+\qquad
+\mathrm{SE}(\hat{\mu}) = \frac{\sigma}{\sqrt{n}}.
+$$
 
-- **95% confidence interval (95%置信区间)** for β1\beta_1β1:
+- $\sigma^2$：单个观测 $Y_i$ 的方差（总体方差）
+- $\mathrm{SE}(\hat{\mu})$：均值估计的标准误（standard error of the mean）
 
-  β1^±tn−2, 0.975⋅SE(β1^).\widehat{\beta_1} \pm t_{n-2,\,0.975} \cdot \text{SE}(\widehat{\beta_1}).β1±tn−2,0.975⋅SE(β1).
+---
 
-- Interpretation: if CI does **not contain 0**, we have evidence of a linear association.
+##### 3.1.2 回归系数的标准误
 
-**Model assumptions（模型假设 / Gauss–Markov 条件）**
+线性回归模型：
 
-For OLS to be **BLUE (最佳线性无偏估计)** and for inference to be valid we need:Week_01 (1)
+$$
+Y_i = \beta_0 + \beta_1 X_i + \varepsilon_i,\quad i = 1,\dots,n
+$$
 
-1. **Linearity（线性假设）**
-   - True relationship is linear in parameters: E(Y∣X)=β0+β1XE(Y|X) = \beta_0 + \beta_1 XE(Y∣X)=β0+β1X.
-2. **No perfect multicollinearity（无完全共线性）**
-   - In simple regression this is automatically satisfied; in multiple regression predictors must not be perfectly linearly dependent.
-3. **Strict exogeneity（严格外生性）**
-   - Error has mean 0 given XXX: E(ε∣X)=0E(\varepsilon|X)=0E(ε∣X)=0.
-4. **Spherical errors（球形误差 / 同方差、无自相关）**
-   - Constant variance (homoskedasticity 同方差性) and no correlation between errors.
-   - Often also assume normality for exact t/F tests.
+最小二乘估计得到截距和斜率：
 
-**Heteroskedasticity（异方差性）**
+- 截距估计：$\widehat{\beta_0}$
+- 斜率估计：$\widehat{\beta_1}$
 
-- The variance of errors changes with XXX (e.g. residuals fan out).
-- Consequences:
-  - OLS coefficients still **unbiased**, but
-  - Standard errors and p-values become **incorrect**, so inference is unreliable.
-- Solutions: transform variables, use robust SEs, or weighted least squares (beyond Week 2 depth).
+在经典线性模型假设下（同方差、无自相关等），它们的标准误为：
 
-------
+$$
+\mathrm{SE}(\widehat{\beta_0}) 
+= 
+\sigma \sqrt{\frac{1}{n} + \frac{\bar{x}^2}{\displaystyle \sum_{i=1}^n (x_i - \bar{x})^2}},
+$$
+
+$$
+\mathrm{SE}(\widehat{\beta_1}) 
+= 
+\frac{\sigma}{\sqrt{\displaystyle \sum_{i=1}^n (x_i - \bar{x})^2}}.
+$$
+
+其中：
+
+- $\bar{x} = \dfrac{1}{n}\sum_{i=1}^n x_i$ 为自变量 $X$ 的样本均值
+- 分母 $\sum_{i=1}^n (x_i - \bar{x})^2$ 越大，说明 $X$ 的变异越大，斜率估计越精确 → 标准误越小
+
+> 实际应用中 $\sigma$ 是未知的，因此需要用残差来估计。
+
+---
+
+##### 3.1.3 用残差估计 $\sigma$
+
+通常用残差平方和（RSS）估计误差方差：
+
+$$
+\widehat{\sigma}^2 
+= 
+\frac{1}{n - 2} \sum_{i=1}^n \hat{\varepsilon}_i^2
+=
+\frac{1}{n - 2} \sum_{i=1}^n \big( y_i - \widehat{\beta_0} - \widehat{\beta_1} x_i \big)^2.
+$$
+
+- 分母是 $n - 2$，因为我们估计了两个参数（$\beta_0, \beta_1$），自由度为 $n - 2$。
+- 然后把 $\sigma$ 用 $\widehat{\sigma}$ 替换，得到实际的标准误估计：
+
+$$
+\widehat{\mathrm{SE}}(\widehat{\beta_0}),\quad
+\widehat{\mathrm{SE}}(\widehat{\beta_1}).
+$$
+
+---
+
+#### ==3.2 Confidence Intervals & Tests（置信区间与显著性检验）==
+
+##### 3.2.1 原假设与检验统计量
+
+在简单线性回归中，一个常见的检验目标是：
+
+> 检验自变量 $X$ 与因变量 $Y$ 之间是否存在 **线性关系**。
+
+典型的原假设（null hypothesis）：
+
+$$
+H_0 : \beta_1 = 0
+\quad\text{（no linear relationship，无线性关系）}
+$$
+
+备择假设（two-sided）：
+
+$$
+H_1 : \beta_1 \neq 0.
+$$
+
+**检验统计量（test statistic）：**
+
+$$
+t 
+= \frac{\widehat{\beta_1}}{\mathrm{SE}(\widehat{\beta_1})}.
+$$
+
+在误差为正态且模型假设成立时，$t$ 统计量在 $H_0$ 下服从自由度为 $n-2$ 的 t 分布：
+
+$$
+t \sim t_{n-2} \quad \text{under } H_0.
+$$
+
+---
+
+##### 3.2.2 95% 置信区间（for $\beta_1$）
+
+$\beta_1$ 的 $95\%$ 置信区间为：
+
+$$
+\widehat{\beta_1} 
+\pm 
+t_{n-2,\;0.975} \cdot \mathrm{SE}(\widehat{\beta_1}),
+$$
+
+其中：
+
+- $t_{n-2,\;0.975}$ 是自由度为 $n-2$ 的 t 分布上 $97.5\%$ 分位数  
+  （因为两侧各留 $2.5\%$，合计 $5\%$）。
+
+**解释（interpretation）：**  
+
+- 如果该置信区间 **不包含 0**，则有证据认为 $\beta_1 \neq 0$，即存在线性关联；
+- 如果置信区间 **包含 0**，则数据不足以拒绝“无线性关系”的假设。
+
+---
+
+#### 3.3 Model Assumptions（模型假设 / Gauss–Markov 条件）
+
+为了使 OLS(最小二乘估计) 是 BLUE（最佳线性无偏估计），并且上述检验与置信区间是有效的，我们需要若干模型假设（Gauss–Markov 条件）。
+
+##### 3.3.1 Linearity（线性假设）
+
+真实的条件期望是“参数线性”的：
+
+$$
+\mathbb{E}(Y \mid X) = \beta_0 + \beta_1 X.
+$$
+
+- 这里的“线性”是指对参数 $\beta_0, \beta_1$ 线性，而不是要求 X 本身不能做变换（例如可以在模型中放入 $X^2$，那依然是对参数线性）。
+
+---
+
+##### 3.3.2 No Perfect Multicollinearity（无完全共线性）
+
+- 在简单线性回归中（只有一个 $X$），这个条件自动满足；
+- 在多元回归中，多个自变量之间 **不能是精确的线性函数关系**，例如不能有：
+  $$
+  X_3 = 2 X_1 - X_2
+  $$
+- 一旦存在完全共线性，设计矩阵不可逆，OLS 解不存在或不唯一。
+
+---
+
+##### 3.3.3 Strict Exogeneity（严格外生性）
+
+误差项在给定自变量时的条件期望为 0：
+
+$$
+\mathbb{E}(\varepsilon \mid X) = 0.
+$$
+
+- 意义：在给定 $X$ 之后，误差的平均为 0，不系统性偏向正或负；
+- 确保 OLS 估计 **无偏**：$\mathbb{E}(\widehat{\beta_0}) = \beta_0$，$\mathbb{E}(\widehat{\beta_1}) = \beta_1$。
+
+---
+
+##### 3.3.4 Spherical Errors（球形误差）
+
+“球形误差”通常包括以下两点：
+
+1. **同方差性（homoskedasticity）**  
+
+   所有误差具有相同的方差：
+
+   $$
+   \mathrm{Var}(\varepsilon_i) = \sigma^2,\quad \forall i.
+   $$
+
+2. **无自相关（no autocorrelation）**  
+
+   不同观测之间的误差不相关：
+
+   $$
+   \mathrm{Cov}(\varepsilon_i, \varepsilon_j) = 0,\quad i \neq j.
+   $$
+
+在加上误差正态分布假设时：
+
+- 可以得到 t 检验、F 检验的**精确分布**（exact t/F tests）；
+- 这就是经典线性模型的完整框架。
+
+---
+
+#### 3.4 Heteroskedasticity（异方差性）
+
+##### 3.4.1 定义与直观
+
+**异方差性（heteroskedasticity）**：误差的方差随 $X$ 的取值而变化：
+
+$$
+\mathrm{Var}(\varepsilon_i \mid X_i) = \sigma_i^2,
+\quad \text{而不是同一个常数 } \sigma^2.
+$$
+
+典型现象：在残差 vs. 拟合值或残差 vs. 自变量的散点图中，残差呈“扇形”散开（fan out），方差随 $X$ 增大而变大或变小。
+
+---
+
+##### 3.4.2 异方差的后果
+
+在异方差性下：
+
+1. **OLS 系数仍然无偏（unbiased）**
+
+   只要外生性（$\mathbb{E}(\varepsilon \mid X) = 0$）仍然成立，  
+   则
+   $$
+   \mathbb{E}(\widehat{\beta_0}) = \beta_0,\quad
+   \mathbb{E}(\widehat{\beta_1}) = \beta_1.
+   $$
+
+2. **但标准误和 p 值不再正确**
+
+   - 传统公式推导出的 $\mathrm{SE}(\widehat{\beta})$ 假设了同方差；
+   - 当存在异方差时，这些标准误会被低估或高估；
+   - 结果：置信区间和显著性检验（t 检验、F 检验）的结论变得 **不可靠（unreliable）**。
+
+---
+
+##### 3.4.3 常见应对方法（思路）
+
+在超出本周（Week 2）深度的内容中，常见解决思路包括：
+
+1. **变量变换（transform variables）**
+
+   - 对 $Y$ 使用对数变换、平方根变换等；
+   - 有时可以稳定方差，使误差更接近同方差。
+
+2. **稳健标准误（robust standard errors）**
+
+   - 使用 heteroskedasticity-robust SE（例如“White robust SE”）；
+   - 可以在存在异方差的情况下仍然进行“稳健”的 t/F 检验。
+
+3. **加权最小二乘（weighted least squares, WLS）**
+
+   - 若已知或可建模方差结构，可用权重 $w_i \propto 1/\sigma_i^2$；
+   - 在合适的权重下，能恢复“等方差条件”并改善估计效率。
+
+> 在当前课程阶段，你主要需要记住：  
+> 异方差性 **不会破坏 OLS 系数的无偏性**，  
+> 但会使传统的标准误和 p 值 **不再可信**，从而影响回归推断的可靠性。
+
+#### ==3.5 反思总结：t 检验和 t 统计量， 置信区间：核心思想、公式与理解==
+
+##### 3.1 典型原假设
+
+在简单线性回归中，我们通常想检验：
+
+> 自变量 \(X\) 和因变量 \(Y\) 之间是否存在**线性关系**。
+
+典型的原假设（null hypothesis）为：
+
+$$
+H_0: \beta_1 = 0
+$$
+
+含义：**斜率为 0，即 \(X\) 和 \(Y\) 之间没有线性关系（no linear relationship）**。
+
+---
+
+##### 3.2 t 统计量的分布
+
+在线性模型假设 + 同方差 + 误差正态分布的条件下，可以证明：
+
+$$
+\frac{\hat{\beta}_1 - \beta_1}{\mathrm{SE}(\hat{\beta}_1)} \sim t_{n-2},
+$$
+
+其中：
+
+- \(\hat{\beta}_1\)：斜率的最小二乘估计（OLS estimate）
+- \(\mathrm{SE}(\hat{\beta}_1)\)：\(\hat{\beta}_1\) 的标准误（standard error）
+- \(t_{n-2}\)：自由度为 \(n-2\) 的 t 分布（因为估计了 \(\beta_0, \beta_1\) 两个参数）
+
+特别地，在原假设 \(H_0: \beta_1 = 0\) 下，有：
+
+$$
+t 
+= \frac{\hat{\beta}_1 - 0}{\mathrm{SE}(\hat{\beta}_1)}
+= \frac{\hat{\beta}_1}{\mathrm{SE}(\hat{\beta}_1)}
+\sim t_{n-2}.
+$$
+
+这里的 \(t_{n-2}\) 表示自由度为 \(n-2\) 的 t 分布。
+
+---
+
+##### 3.3 t 检验的操作步骤（考试套路）
+
+1. **估计回归模型，算出：**
+   - \(\hat{\beta}_1\)：斜率估计；
+   - 残差平方和（RSS）：
+     $$
+     \mathrm{RSS} = \sum_{i=1}^n \hat{\varepsilon}_i^2
+     $$
+   - 误差方差估计：
+     $$
+     s^2 = \frac{\mathrm{RSS}}{n-2}
+     $$
+   - 斜率的标准误：
+     $$
+     \mathrm{SE}(\hat{\beta}_1)
+     $$
+
+2. **计算 t 统计量：**
+
+   $$
+   t_{\text{obs}} 
+   = \frac{\hat{\beta}_1}{\mathrm{SE}(\hat{\beta}_1)}.
+   $$
+
+3. **选择显著性水平**（例如常用 \(\alpha = 0.05\)，双尾检验）。
+
+4. **从 t 表查临界值：**
+
+   查自由度为 \(n-2\) 的 t 分布的 \(97.5\%\) 分位点：
+   $$
+   t_{n-2,\,0.975}
+   $$
+   （因为双尾显著性水平为 \(5\%\)，左右各 \(2.5\%\)）。
+
+5. **比较并做结论：**
+
+   - 如果
+     $$
+     \bigl|t_{\text{obs}}\bigr| > t_{n-2,\,0.975},
+     $$
+     则 **拒绝 \(H_0\)**，认为斜率显著不为 0，有线性关系。
+   - 如果
+     $$
+     \bigl|t_{\text{obs}}\bigr| \le t_{n-2,\,0.975},
+     $$
+     则 **不能拒绝 \(H_0\)**，数据不足以说明斜率显著不为 0。
+
+---
+
+##### 4. 置信区间：核心思想、公式与理解
+
+##### 4.1 一般形式
+
+任何一个“估计量 + t 检验”的组合，一般的 \(95\%\) 置信区间形式是：
+
+$$
+\text{估计值} \;\pm\; (\text{临界值}) \times (\text{标准误}).
+$$
+
+对于回归斜率 \(\beta_1\)，\(95\%\) 置信区间为：
+
+$$
+\hat{\beta}_1 \;\pm\; t_{n-2,\,0.975} \cdot \mathrm{SE}(\hat{\beta}_1),
+$$
+
+其中：
+
+- \(t_{n-2,\,0.975}\)：自由度为 \(n-2\) 的 t 分布的 \(97.5\%\) 分位点  
+  （双尾检验中，左右各 \(2.5\%\)，合计 \(5\%\)）。
+- 大样本情况下，\(t_{n-2,\,0.975} \approx 1.96\)，接近标准正态的 \(z_{0.975}\)。
+
+---
+
+##### 4.2 置信区间是如何从 t 检验“反推”出来的
+
+考虑更一般的原假设：
+
+$$
+H_0 : \beta_1 = \beta_{10},
+$$
+
+此时 t 统计量为：
+
+$$
+T 
+= \frac{\hat{\beta}_1 - \beta_{10}}{\mathrm{SE}(\hat{\beta}_1)}
+\sim t_{n-2} \quad \text{under } H_0.
+$$
+
+要“**不拒绝**”这个原假设，就要求 \(T\) 落在 t 分布的中间 \(95\%\) 区间内，即：
+
+$$
+-\,t_{n-2,\,0.975}
+\;\le\;
+\frac{\hat{\beta}_1 - \beta_{10}}{\mathrm{SE}(\hat{\beta}_1)}
+\;\le\;
+t_{n-2,\,0.975}.
+$$
+
+两边同乘 \(\mathrm{SE}(\hat{\beta}_1)\)，再对不等式进行整理，可以得到：
+
+$$
+\hat{\beta}_1 - t_{n-2,\,0.975} \cdot \mathrm{SE}(\hat{\beta}_1)
+\;\le\;
+\beta_{10}
+\;\le\;
+\hat{\beta}_1 + t_{n-2,\,0.975} \cdot \mathrm{SE}(\hat{\beta}_1).
+$$
+
+所有不会被拒绝的 \(\beta_{10}\) 组成了一个区间，而这个区间正是：
+
+> \(\beta_1\) 的 \(95\%\) 置信区间。
+
+所以，可以理解为：
+
+> **95% 置信区间 = 把“一系列 t 检验的接受域”反过来看的结果。**
+
+---
+
+##### 4.3 与“是否包含 0”的关系
+
+通常我们检验的是：
+
+$$
+H_0 : \beta_1 = 0.
+$$
+
+这时：
+
+- 如果 **0 在置信区间内**，说明在 \(5\%\) 显著性水平下，  
+  “\(\beta_1 = 0\)” 这一假设 **不能被拒绝**，  
+  ⇒ **没有显著线性关系**。
+- 如果 **0 不在置信区间内**，说明在 \(5\%\) 水平下，  
+  “\(\beta_1 = 0\)” 会被 t 检验拒绝，  
+  ⇒ **存在显著线性关系**。
+
+因此：
+
+> 「置信区间不含 0」 \(\Longleftrightarrow\) 「t 检验拒绝 \(H_0 : \beta_1 = 0\)」
+
+这两种说法在数学上是完全等价的，只是呈现方式不同：
+
+- t 检验：给出一个 t 值和 p-value；
+- 置信区间：给出一段“合理的参数范围”。
+
+---
+
+##### 4.4 正确理解 95% 置信区间
+
+标准（考试用）句式：
+
+> We are 95% confident that the true slope \(\beta_1\) lies between \(L\) and \(U\).
+
+更严谨的频率学派解释是：
+
+> 如果我们**无限次**重复同样的抽样和建模过程，每一次都用同样的公式构造一个区间，那么大约 **95% 的区间会覆盖真实的 \(\beta_1\)**。
+
+注意：
+
+- 不是在说：“\(\beta_1\) 有 \(95\%\) 的概率在这一个区间里”。
+- 在频率学派的框架下，\(\beta_1\) 被视为一个**固定常数**（不是随机的）；  
+  真正随机的是我们抽到的样本和由此构造出的置信区间。
+
+# ==补充理解这里：==计算题，总结公式
+
+## 1. t value 的大小到底在说什么？
+
+![](./tValue.png)
+
+## 2. p-value 很小到底意味着什么？“小然后呢？”
+
+![](./pValue.png)
+
+## 3. R^2^ 
+
+![](./R's origin.png)
+
+![](./R2understanding.png)
+
+## 4. 对比总结
+
+![](./table.png)
+
+![](./relation.png)
 
 ### 4. Parametric vs Non-parametric methods（参数 vs 非参数方法）
 
