@@ -1,4 +1,4 @@
-# week1 intro
+# week1 基础IO数据函数画图
 
 ## 1. 知识点：
 
@@ -321,6 +321,62 @@ From **Workshop Week 1** instructions:
 > - interpret what they say about type of variables, centre/spread, and distribution shape;
 > - choose a suitable summary or graphic for a described task.
 
+### 7. 补充aggregate 用法
+
+- 写法：aggregate(y ~ group, data=, FUN=, ...)
+
+  - R 里用 ~ 表示“公式”，这里可以理解为：
+
+  - 左边：sodium —— 要被汇总的变量（因变量 / 结果）
+
+  - 右边：mfr —— 分组变量（自变量 / 分组因素）
+
+  - 5. aggregate() 的常见用法扩展
+
+    - 5.1 按多个变量分组
+
+    - 比如：按制造商 mfr 和类型 type（热/冷）一起分组：
+
+    - aggregate(sodium ~ mfr + type, data = cereal, FUN = mean)
+
+    - 理解为：
+
+    - **“每个 (mfr, type) 组合一组，然后算这一组的平均 sodium。”**
+
+    - **结果 data.frame 会有三列：mfr, type, sodium。**
+
+    - 5.2 一次汇总多个数值变量
+
+    - 如果你不止想汇总 sodium，还想一起算 calories 和 sugars 的平均值，可以用 cbind() 把多个变量绑在左边：
+
+    - aggregate(cbind(sodium, calories, sugars) ~ mfr,
+
+    - data = cereal,
+
+    - FUN  = mean)
+
+    - 结果大概是：
+
+    - mfr   sodium  calories  sugars
+
+    - 1 A     ...     ...       ...
+
+    - 2 G     ...     ...       ...
+
+    - ...
+
+    - 5.3 常用参数：na.rm
+
+    - aggregate() 本身没有 na.rm 这个参数，但你可以在 FUN 里写一个自定义函数：
+
+    - aggregate(sodium ~ mfr,
+
+    - data = cereal,
+
+    - FUN  = function(x) mean(x, na.rm = TRUE))
+
+    - 这在数据里有缺失值 NA 时非常重要。
+
 ## 2. 代码
 
 ### 1. tutorial练习
@@ -378,6 +434,10 @@ cereal.matrix <- as.matrix(cereal)
 is.matrix(cereal.matrix)
 cereal.removed <- cereal %>% select(-c(mfr, name, type))
 cereal.removed |> colnames()
+
+# Using the subset() function and select to remove the Class column.
+sonar_remove <- subset(sonar, select = -Class)
+
 # Convert the 'cereal.removed' data frame to a numeric matrix.
 cereal.numeric.matrix <- as.matrix(cereal.removed)
 str(cereal.numeric.matrix)
@@ -385,7 +445,8 @@ str(cereal.numeric.matrix)
 summary(cereal$sodium)
 mean.sodiums <- aggregate(sodium ~ mfr, data = cereal, FUN = mean)
 mean.sodiums
-
+# 按照Class 来分得到V1的中位数
+aggregate(V1 ~ Class, data = sonar, FUN = median)
 
 # graphs
 boxplot(sodium ~ mfr, data = cereal,
